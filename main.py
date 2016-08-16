@@ -23,6 +23,7 @@ from telegram import InlineQueryResultArticle, ParseMode, \
     InputTextMessageContent
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
+from urllib.parse import quote
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -31,20 +32,20 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
+
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Hi!')
+    bot.sendMessage(update.message.chat_id, text='Hello, I am an Inline bot, please use me by mentioning my username in a chat along with your query')
 
 
-def help(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Help!')
-
-
-def escape_markdown(text):
-    """Helper function to escape telegram markup symbols"""
-    escape_chars = '\*_`\['
-    return re.sub(r'([%s])' % escape_chars, r'\\\1', text)
+def convert_to_url(query):
+    # feel free to fork and change the base url
+    base = "https://duckduckgo.com/?q="
+    end = quote(query)
+    url = base + end
+    return url
 
 
 def inlinequery(bot, update):
@@ -52,21 +53,9 @@ def inlinequery(bot, update):
     results = list()
 
     results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Caps",
+                                            title=query,
                                             input_message_content=InputTextMessageContent(
-                                                query.upper())))
-
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Bold",
-                                            input_message_content=InputTextMessageContent(
-                                                "*%s*" % escape_markdown(query),
-                                                parse_mode=ParseMode.MARKDOWN)))
-
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title="Italic",
-                                            input_message_content=InputTextMessageContent(
-                                                "_%s_" % escape_markdown(query),
-                                                parse_mode=ParseMode.MARKDOWN)))
+                                                convert_to_url(query))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
@@ -76,15 +65,23 @@ def error(bot, update, error):
 
 
 def main():
+    file_ = open('TOKEN')
+    try:
+        token_=file_.read().rstrip('\n')
+    finally:
+        file_.close()
+    # token is a file used to hide my token from git
+    # it contains one line with my token
+
     # Create the Updater and pass it your bot's token.
-    updater = Updater("TOKEN")
+    updater = Updater(token_)
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("help", start))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(InlineQueryHandler(inlinequery))
