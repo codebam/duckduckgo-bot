@@ -23,9 +23,10 @@ from telegram import InlineQueryResultArticle, ParseMode, \
     InputTextMessageContent
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
-from urllib.parse import quote
+from urllib.parse import quote_plus
 import configparser
 from os import environ
+import requests
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -34,18 +35,22 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-
-
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     bot.sendMessage(update.message.chat_id, text='Hello, I am an Inline bot, please use me by mentioning my username in a chat along with your query')
 
 
+def shorten_url(long_url):
+    response = requests.post('https://ptpb.pw/u', data={'c':long_url})
+    url = response.headers.get('Location')
+    return url
+
+
 def convert_to_url(query):
     # feel free to fork and change the base url
     base = "https://duckduckgo.com/?q="
-    end = quote(query)
+    end = quote_plus(query)
     url = base + end
     return url
 
@@ -57,7 +62,14 @@ def inlinequery(bot, update):
     results.append(InlineQueryResultArticle(id=uuid4(),
                                             title=query,
                                             input_message_content=InputTextMessageContent(
+						"DuckDuckGo:",
                                                 convert_to_url(query))))
+
+    results.append(InlineQueryResultArticle(id=uuid4(),
+                                            title=query,
+                                            input_message_content=InputTextMessageContent(
+                                                "Shortened with ptpb.pw:",
+						shorten_url(convert_to_url(query)))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
