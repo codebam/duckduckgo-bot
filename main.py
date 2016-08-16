@@ -24,6 +24,8 @@ from telegram import InlineQueryResultArticle, ParseMode, \
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
 from urllib.parse import quote
+import configparser
+from os import environ
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -64,14 +66,37 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 
+def change_token():
+    config['config'] = {'token':input('API Key: ')}
+    if input('Save? [Y/n]') not in ['n','N']:
+        with open('config.mine.ini', 'w') as configfile:
+            config.write(configfile)
+        print('API Key Saved to config.mine.ini')
+    return config['config']['token']
+
+
 def main():
-    file_ = open('TOKEN')
     try:
-        token_=file_.read().rstrip('\n')
-    finally:
-        file_.close()
-    # token is a file used to hide my token from git
-    # it contains one line with my token
+        token_ = environ['TELEGRAM_API_KEY']
+        # tries to read the api key inside an environment var if it exists
+    except KeyError:
+        config = configparser.ConfigParser()
+        config.read('config.mine.ini')
+        try:
+            token_ = config['config']['token']
+        except KeyError:
+            config.read('config.ini')
+            try:
+                token_ = config['config']['token']
+            except:
+                pass
+            # if there's a keyerror the file probably doesn't exist
+            # we fall back to config.ini (the template file)
+
+    if token_ in ['','enter your token here']:
+        token_ = change_token()
+        # if both token files are empty we prompt the user to enter
+        # their api key and optionally save it
 
     # Create the Updater and pass it your bot's token.
     updater = Updater(token_)
