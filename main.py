@@ -41,10 +41,10 @@ def start(bot, update):
     bot.sendMessage(update.message.chat_id, text='Hello, I am an Inline bot, please use me by mentioning my username in a chat along with your query')
 
 
-def shorten_url(long_url):
-    response = requests.post('https://ptpb.pw/u', data={'c':long_url})
-    url = response.headers.get('Location')
-    return url
+#def shorten_url(long_url):
+#    response = requests.post('https://ptpb.pw/u', data={'c':long_url})
+#    url = response.headers.get('Location')
+#    return url
 
 
 def convert_to_url(query):
@@ -65,11 +65,11 @@ def inlinequery(bot, update):
                                             url=convert_to_url(query),
                                             input_message_content=InputTextMessageContent(convert_to_url(query))))
 
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title='Shortened: ' + query,
-                                            thumb_url='https://ptpb.pw/static/images/ptpb-128.png',
-                                            url=shorten_url(convert_to_url(query)),
-                                            input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
+#    results.append(InlineQueryResultArticle(id=uuid4(),
+#                                            title='Shortened: ' + query,
+#                                            thumb_url='https://ptpb.pw/static/images/ptpb-128.png',
+#                                            url=shorten_url(convert_to_url(query)),
+#                                            input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
