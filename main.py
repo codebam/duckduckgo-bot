@@ -60,16 +60,16 @@ def inlinequery(bot, update):
     results = list()
 
     results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title=query,
-                                            input_message_content=InputTextMessageContent(
-						"DuckDuckGo:",
-                                                convert_to_url(query))))
+                                            title='DuckDuckGo: ' + query,
+                                            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+                                            url=convert_to_url(query),
+                                            input_message_content=InputTextMessageContent(convert_to_url(query))))
 
     results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title=query,
-                                            input_message_content=InputTextMessageContent(
-                                                "Shortened with ptpb.pw:",
-						shorten_url(convert_to_url(query)))))
+                                            title='Shortened: ' + query,
+                                            thumb_url='https://ptpb.pw/static/images/ptpb-128.png',
+                                            url=shorten_url(convert_to_url(query)),
+                                            input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
