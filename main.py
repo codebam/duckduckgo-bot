@@ -17,9 +17,7 @@ bot.
 """
 from uuid import uuid4
 
-import re
-
-from telegram import InlineQueryResultArticle, ParseMode, \
+from telegram import InlineQueryResultArticle, \
     InputTextMessageContent
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 import logging
@@ -38,11 +36,12 @@ logger = logging.getLogger(__name__)
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Hello, I am an Inline bot, please use me by mentioning my username in a chat along with your query')
+    bot.sendMessage(update.message.chat_id, text='''Hello, I am an Inline bot, \
+please use me by mentioning my username in a chat along with your query''')
 
 
 def shorten_url(long_url):
-    response = requests.post('https://ptpb.pw/u', data={'c':long_url})
+    response = requests.post('https://ptpb.pw/u', data={'c': long_url})
     url = response.headers.get('Location')
     return url
 
@@ -79,8 +78,9 @@ def error(bot, update, error):
 
 
 def change_token():
-    config['config'] = {'token':input('API Key: ')}
-    if input('Save? [Y/n]') not in ['n','N']:
+    config = []
+    config['config'] = {'token': input('API Key: ')}
+    if input('Save? [Y/n]') not in ['n', 'N']:
         with open('config.mine.ini', 'w') as configfile:
             config.write(configfile)
         print('API Key Saved to config.mine.ini')
