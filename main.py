@@ -40,6 +40,13 @@ def start(bot, update):
 please use me by mentioning my username in a chat along with your query''')
 
 
+def lmddgtfy_url(query):
+    base = "https://lmddgtfy.net/?q="
+    end = quote_plus(query)
+    url = base + end
+    return url
+
+
 def shorten_url(long_url):
     response = requests.post('https://ptpb.pw/u', data={'c': long_url})
     url = response.headers.get('Location')
@@ -69,6 +76,12 @@ def inlinequery(bot, update):
                                             thumb_url='https://avatars1.githubusercontent.com/u/12021773?v=3&s=200',
                                             url=shorten_url(convert_to_url(query)),
                                             input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
+
+    results.append(InlineQueryResultArticle(id=uuid4(),
+                                            title='LMDDGTFY: ' + query,
+                                            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+                                            url=lmddgtfy_url(query),
+                                            input_message_content=InputTextMessageContent(lmddgtfy_url(query))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
