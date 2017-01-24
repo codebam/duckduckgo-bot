@@ -66,7 +66,7 @@ def inlinequery(bot, update):
 
     results.append(InlineQueryResultArticle(id=uuid4(),
                                             title='Shortened: ' + query,
-                                            thumb_url='https://ptpb.pw/static/images/ptpb-128.png',
+                                            thumb_url='https://avatars1.githubusercontent.com/u/12021773?v=3&s=200',
                                             url=shorten_url(convert_to_url(query)),
                                             input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
 
