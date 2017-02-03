@@ -26,8 +26,9 @@ from telegram import InlineQueryResultArticle, \
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +37,9 @@ LOGGER = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """When the bot is issued the command /start"""
-    bot.sendMessage(update.message.chat_id, text='''Hello, I am an Inline bot, \
+    bot.sendMessage(
+        update.message.chat_id,
+        text='''Hello, I am an Inline bot, \
 please use me by mentioning my username in a chat along with your query''')
 
 
@@ -69,23 +72,32 @@ def inlinequery(bot, update):
     query = update.inline_query.query
     results = list()
 
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title='DuckDuckGo: ' + query,
-                                            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
-                                            url=convert_to_url(query),
-                                            input_message_content=InputTextMessageContent(convert_to_url(query))))
+    results.append(
+        InlineQueryResultArticle(
+            id=uuid4(),
+            title='DuckDuckGo: ' + query,
+            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+            url=convert_to_url(query),
+            input_message_content=InputTextMessageContent(
+                convert_to_url(query))))
 
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title='Shortened: ' + query,
-                                            thumb_url='https://avatars1.githubusercontent.com/u/12021773?v=3&s=200',
-                                            url=shorten_url(convert_to_url(query)),
-                                            input_message_content=InputTextMessageContent(shorten_url(convert_to_url(query)))))
+    results.append(
+        InlineQueryResultArticle(
+            id=uuid4(),
+            title='Shortened: ' + query,
+            thumb_url='https://avatars1.githubusercontent.com/u/12021773?v=3&s=200',
+            url=shorten_url(convert_to_url(query)),
+            input_message_content=InputTextMessageContent(
+                shorten_url(convert_to_url(query)))))
 
-    results.append(InlineQueryResultArticle(id=uuid4(),
-                                            title='LMDDGTFY: ' + query,
-                                            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
-                                            url=lmddgtfy_url(query),
-                                            input_message_content=InputTextMessageContent(lmddgtfy_url(query))))
+    results.append(
+        InlineQueryResultArticle(
+            id=uuid4(),
+            title='LMDDGTFY: ' + query,
+            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+            url=lmddgtfy_url(query),
+            input_message_content=InputTextMessageContent(lmddgtfy_url(
+                query))))
 
     bot.answerInlineQuery(update.inline_query.id, results=results)
 
