@@ -15,15 +15,15 @@ Basic inline bot example. Applies different text transformations.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
-import logging
 import configparser
-from uuid import uuid4
-from urllib.parse import quote_plus
+import logging
 from os import environ
+from urllib.parse import quote_plus
+from uuid import uuid4
+
 import requests
-from telegram import InlineQueryResultArticle, \
-    InputTextMessageContent
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+from telegram import InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import CommandHandler, InlineQueryHandler, Updater
 
 # Enable logging
 logging.basicConfig(
@@ -32,9 +32,10 @@ logging.basicConfig(
 
 LOGGER = logging.getLogger(__name__)
 
-
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
+
+
 def start(bot, update):
     """When the bot is issued the command /start"""
     bot.sendMessage(
@@ -76,7 +77,8 @@ def inlinequery(bot, update):
         InlineQueryResultArticle(
             id=uuid4(),
             title='DuckDuckGo: ' + query,
-            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+            thumb_url='''
+            https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png''',
             url=convert_to_url(query),
             input_message_content=InputTextMessageContent(
                 convert_to_url(query))))
@@ -85,7 +87,8 @@ def inlinequery(bot, update):
         InlineQueryResultArticle(
             id=uuid4(),
             title='Shortened: ' + query,
-            thumb_url='https://avatars1.githubusercontent.com/u/12021773?v=3&s=200',
+            thumb_url='''
+            https://avatars1.githubusercontent.com/u/12021773?v=3&s=200''',
             url=shorten_url(convert_to_url(query)),
             input_message_content=InputTextMessageContent(
                 shorten_url(convert_to_url(query)))))
@@ -94,7 +97,8 @@ def inlinequery(bot, update):
         InlineQueryResultArticle(
             id=uuid4(),
             title='LMDDGTFY: ' + query,
-            thumb_url='https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png',
+            thumb_url='''
+            https://duckduckgo.com/assets/icons/meta/DDG-iOS-icon_60x60.png''',
             url=lmddgtfy_url(query),
             input_message_content=InputTextMessageContent(lmddgtfy_url(
                 query))))
@@ -132,7 +136,7 @@ def main():
             config.read('config.ini')
             try:
                 token_ = config['config']['token']
-            except:
+            except KeyError:
                 pass
             # if there's a keyerror the file probably doesn't exist
             # we fall back to config.ini (the template file)
